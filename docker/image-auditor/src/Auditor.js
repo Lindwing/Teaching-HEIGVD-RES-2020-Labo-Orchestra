@@ -1,6 +1,7 @@
 var dgram = require('dgram');
 var net = require('net');
 const moment = require('moment');
+const time_limit = 5;
 
 moment().format();
 
@@ -25,46 +26,47 @@ s.bind(protocol.PROTOCOL_PORT, function () {
 var actives = new Array();
 var musiciens = new Map();
 
+//Traitement du message
 s.on('message', function (msg, source) {
 
     var tmpMus = JSON.parse(msg);
-
+	
+	//Création d'un nouveau musicien ou mise à jour
     if (!musiciens.has(tmpMus.uuid)) {
         var musicien = new Object();
         musicien.uuid = tmpMus.uuid;
         musicien.instrument = sons.get(tmpMus.sound);
         musicien.activeSince = moment();
-        musicien.active = true;
+		musicien.lastPlay = moment();
 
         musiciens.set(musicien.uuid, musicien);
     } else {
-        musiciens.get(tmpMus.uuid).active = true;
+        musiciens.get(tmpMus.uuid).lastPlay = moment();
     }
 });
 
-//interval d'écoute ~3sec
+//interval d'écoute ~1sec
 setInterval(function () {
 
     actives = new Array();
-
-    musiciens.forEach(function forAll(value,key, map){
-        if(musiciens.get(key).active){
-
-            var tmpMus = new Object();
+	
+	//Traitement pour chaque musicien
+    musiciens.forEach(function forAll(value, key, map){
+        if(moment(Date.now()).diff(musiciens.get(key).lastPlay, 'seconds') < time_limit){
+            var tmpMus = new Object();	
             tmpMus.uuid = musiciens.get(key).uuid;
             tmpMus.instrument = musiciens.get(key).instrument;
             tmpMus.activeSince = musiciens.get(key).activeSince;
 
             actives.push(tmpMus);
-            musiciens.get(key).active = false;
-        }
+        } else {
+			musiciens.delete(key);
+		}
 	});
 
     console.log(JSON.stringify(actives));
 
-
-
-}, 3000);
+}, 1000);
 
 //Partie TCP
 var server = net.createServer(function (socket) {

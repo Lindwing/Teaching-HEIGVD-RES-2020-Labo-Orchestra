@@ -1,5 +1,9 @@
 # Teaching-HEIGVD-RES-2020-Labo-Orchestra
 
+### Auteur
+* Bouyiatiotis Stéphane
+* Lopes Gouveia Rui Filipe
+
 ## Admin
 
 * **You can work in groups of 2 students**.
@@ -108,7 +112,7 @@ When you connect to the TCP interface of the **Auditor**, you should receive an 
 |Question | Who is going to **send UDP datagrams** and **when**? |
 | | C'est le musicien qui envoie le datagramme toutes les secondes |
 |Question | Who is going to **listen for UDP datagrams** and what should happen when a datagram is received? |
-| | C'est l'auditeur qui va écouter le datagramme puis ajouter ou le mettre à jour |
+| | C'est l'auditeur qui va écouter le datagramme puis ajouter le nouveau musicien ou le mettre à jour |
 |Question | What **payload** should we put in the UDP datagrams? |
 | | Le son ainsi que l'UUID |
 |Question | What **data structures** do we need in the UDP sender and receiver? When will we update these data structures? When will we query these data structures? |
@@ -166,7 +170,7 @@ When you connect to the TCP interface of the **Auditor**, you should receive an 
 |Question | How can we use the `Moment.js` npm module to help us with **date manipulations** and formatting?  |
 | | En utilisant ```moment().format("mon_format");``` où dans mon_format on choisie le format que l'on veux, voir documentation pour savoir les formats accepté. Si rien n'est mis prend le format pas défaut|
 |Question | When and how do we **get rid of inactive players**?  |
-| | Soit en le désactivant et en affichant seulement les musiciens actif, soit en le supprimant via un delete(key) quand il est inactif, ici pendant au moin 5 seconde, ou qu'il ne répond pas |
+| | En regardant régulièrement, environs chaque seconde, la dernière fois que le musicien a joué ou envoyé son datagram, avec ```moment()```, et si ça fais plus de 5 seconde on le supprime avec ```musiciens.delete(key)``` |
 |Question | How do I implement a **simple TCP server** in Node.js?  |
 | | Variable : ```var net = require('net');``` puis après ```var server = net.createServer(fonction)``` ou dans la fonction on met ce que l'on veux faire |
 
